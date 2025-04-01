@@ -1,0 +1,96 @@
+import tkinter as tk
+import random
+import winsound  # For sound effects (Windows only)
+
+# Choices with emojis for fun visuals
+choices = {
+    "Rock": "🪨 Rock",
+    "Paper": "📜 Paper",
+    "Scissors": "✂️ Scissors"
+}
+
+# Colors for different results
+result_colors = {
+    "Win": "green",
+    "Lose": "red",
+    "Tie": "blue"
+}
+
+# Game variables
+user_score = 0
+comp_score = 0
+
+# Function to play sound
+def play_sound():
+    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)  # Fun click sound
+
+# Game logic
+def play(choice):
+    global user_score, comp_score
+    computer_choice = random.choice(list(choices.keys()))
+    result = ""
+
+    if choice == computer_choice:
+        result = "It's a Tie! 🤝"
+        result_color = result_colors["Tie"]
+    elif (choice == "Rock" and computer_choice == "Scissors") or \
+         (choice == "Scissors" and computer_choice == "Paper") or \
+         (choice == "Paper" and computer_choice == "Rock"):
+        result = "You Win! 🎉"
+        result_color = result_colors["Win"]
+        user_score += 1
+    else:
+        result = "You Lose! 😢"
+        result_color = result_colors["Lose"]
+        comp_score += 1
+
+    # Play click sound
+    play_sound()
+
+    # Update labels
+    user_choice_label.config(text=f"You: {choices[choice]}")
+    comp_choice_label.config(text=f"Computer: {choices[computer_choice]}")
+    result_label.config(text=result, fg=result_color)
+    score_label.config(text=f"🏆 Score: You {user_score} - {comp_score} Computer")
+
+# Reset the game
+def reset_game():
+    global user_score, comp_score
+    user_score, comp_score = 0, 0
+    user_choice_label.config(text="You: ❓")
+    comp_choice_label.config(text="Computer: ❓")
+    result_label.config(text="Make your move!", fg="white")
+    score_label.config(text="🏆 Score: You 0 - 0 Computer")
+
+# UI Setup
+root = tk.Tk()
+root.title("🎮 Fun Rock-Paper-Scissors!")
+root.geometry("400x500")
+root.configure(bg="#FFDE59")  # Bright yellow background
+
+# Labels
+tk.Label(root, text="Rock-Paper-Scissors! 🎉", font=("Comic Sans MS", 20, "bold"), fg="black", bg="#FFDE59").pack(pady=10)
+user_choice_label = tk.Label(root, text="You: ❓", font=("Comic Sans MS", 16), fg="black", bg="#FFDE59")
+user_choice_label.pack()
+comp_choice_label = tk.Label(root, text="Computer: ❓", font=("Comic Sans MS", 16), fg="black", bg="#FFDE59")
+comp_choice_label.pack()
+result_label = tk.Label(root, text="Make your move!", font=("Comic Sans MS", 18), fg="black", bg="#FFDE59")
+result_label.pack(pady=10)
+score_label = tk.Label(root, text="🏆 Score: You 0 - 0 Computer", font=("Comic Sans MS", 16), fg="blue", bg="#FFDE59")
+score_label.pack(pady=5)
+
+# Button Frame
+button_frame = tk.Frame(root, bg="#FFDE59")
+button_frame.pack()
+
+# Buttons
+for choice in choices.keys():
+    tk.Button(button_frame, text=choices[choice], command=lambda c=choice: play(c), font=("Comic Sans MS", 14, "bold"), 
+              fg="white", bg="#FF5733", width=12, height=2, bd=5, activebackground="#C70039").pack(side="left", padx=10, pady=10)
+
+# Reset Button
+tk.Button(root, text="🔄 Restart Game", command=reset_game, font=("Comic Sans MS", 14, "bold"), fg="white", bg="red", bd=5,
+          activebackground="darkred", width=15).pack(pady=10)
+
+# Run Application
+root.mainloop()
